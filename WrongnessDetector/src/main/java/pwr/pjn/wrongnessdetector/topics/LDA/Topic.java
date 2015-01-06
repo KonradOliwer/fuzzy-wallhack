@@ -1,4 +1,4 @@
-package pwr.pjn.wrongnessdetector.LDA;
+package pwr.pjn.wrongnessdetector.topics.LDA;
 
 import cc.mallet.types.Alphabet;
 import cc.mallet.types.IDSorter;
@@ -22,7 +22,7 @@ public class Topic implements Serializable {
         this.id = id;
         this.alphabet = alphabet;
         this.topicDistribution = topicDistribution;
-        
+
         wordsIds = new int[words.size()];
         wordsWeight = new int[words.size()];
         Iterator<IDSorter> iterator = words.iterator();
@@ -39,9 +39,17 @@ public class Topic implements Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%d\t%.3f\t", id, topicDistribution));
         for (int i = 0; i < wordsToPrint && i < wordsIds.length; i++) {
-            sb.append(String.format("%s (%d) ", alphabet.lookupObject(wordsIds[i]), wordsWeight[i]));
+            sb.append(String.format("%s (%d) ", getWord(i), wordsWeight[i]));
         }
         return sb.toString();
+    }
+
+    public int getWordsNumber() {
+        return wordsIds.length;
+    }
+
+    public String getWord(int i) {
+        return (String) alphabet.lookupObject(wordsIds[i]);
     }
 
     public int getID() {

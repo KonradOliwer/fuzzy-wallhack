@@ -9,7 +9,7 @@ public class MorfeuszTest {
     public static void main(String args[]) {
     	
     	Morfeusz m = Morfeusz.createInstance(MorfeuszUsage.ANALYSE_ONLY);
-    	System.out.println(m.analyseAsIterator("psy").peek().getLemma());
+    	System.out.println(m.analyseAsIterator("Z.O.O").peek().getLemma());
 
     }
 }

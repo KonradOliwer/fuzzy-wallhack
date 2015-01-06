@@ -1,4 +1,4 @@
-package pwr.pjn.wrongnessdetector.LDA;
+package pwr.pjn.wrongnessdetector.topics.LDA;
 
 import cc.mallet.pipe.CharSequence2TokenSequence;
 import cc.mallet.pipe.CharSequenceLowercase;

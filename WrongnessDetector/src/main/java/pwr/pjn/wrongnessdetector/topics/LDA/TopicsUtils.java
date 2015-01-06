@@ -1,6 +1,8 @@
-package pwr.pjn.wrongnessdetector.LDA;
+package pwr.pjn.wrongnessdetector.topics.LDA;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Iterator;
@@ -8,12 +10,36 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pwr.pjn.wrongnessdetector.Algorithm;
+import pwr.pjn.wrongnessdetector.topics.Learning;
 
 /**
  *
  * @author KonradOliwer
  */
 public class TopicsUtils {
+
+    public static int getNumberOfSentyencesInDocument(String documentPath) {
+        int counter = 0;
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(documentPath));
+            int ch;
+            while ((ch = reader.read()) != -1) {
+                if (ch == '.') {
+                    counter++;
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Learning.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Learning.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return counter;
+    }
 
     public static void topicsPruning(List<Topic> topics, int minVotes, int minWords, int maxWords) {
         Iterator<Topic> iterator = topics.iterator();

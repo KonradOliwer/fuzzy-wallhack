@@ -1,8 +1,8 @@
 package pwr.pjn.wrongnessdetector;
 
 import java.util.List;
-import pwr.pjn.wrongnessdetector.LDA.Topic;
-import pwr.pjn.wrongnessdetector.LDA.TopicsUtils;
+import pwr.pjn.wrongnessdetector.topics.LDA.Topic;
+import pwr.pjn.wrongnessdetector.topics.LDA.TopicsUtils;
 
 /**
  *
