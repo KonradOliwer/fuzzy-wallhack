@@ -1,6 +1,7 @@
 package pwr.pjn.wrongnessdetector.similar;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import pwr.pjn.wrongnessdetector.WrongnessDetector;
-import pwr.pjn.wrongnessdetector.similar.WordnetUtils;
 /**
  *
  * @author KonradOliwer
@@ -90,7 +90,7 @@ public class WordsAvgSimilarityWrongnessDetector implements WrongnessDetector {
 
     private List<String> loadStoplis(String path) {
         try {
-            return Files.readAllLines(Paths.get(path));
+            return Files.readAllLines(Paths.get(path), Charset.forName("ISO-8859-1"));
         } catch (IOException ex) {
             Logger.getLogger(WordsAvgSimilarityWrongnessDetector.class.getName()).log(Level.SEVERE, null, ex);
         }
