@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pwr.pjn.wrongnessdetector.WordsUtils;
-import pwr.pjn.wrongnessdetector.WrongnessDetector;
 
+import pwr.pjn.wrongnessdetector.WrongnessDetector;
+import pwr.pjn.wrongnessdetector.similar.WordnetUtils;
 /**
  *
  * @author KonradOliwer
@@ -40,6 +41,7 @@ public class WordsAvgSimilarityWrongnessDetector implements WrongnessDetector {
         List<String> stoplist = loadStoplis(stoplistDir);
         double[] similarities = new double[words.length];
         Interval interval = new Interval();
+        LinkedList<String> pairs= new LinkedList<String>();
         for (int i = 0; i < words.length; i++) {
             calculateInterval(interval, words, i);
             for (i = interval.begining; i < interval.end; i++) {
@@ -47,10 +49,17 @@ public class WordsAvgSimilarityWrongnessDetector implements WrongnessDetector {
                 if (!skipWord(words[i], stoplist)) {
                     for (int j = interval.begining; j < interval.end; j++) {
                         if (i != j && !skipWord(words[j], stoplist)) {
-                            sumSimilarity += WordsUtils.calculateSimilarity(words[i], words[j]);
+                        	pairs.add(words[i]);
+                        	pairs.add(words[j]);
+                            //sumSimilarity += WordsUtils.calculateSimilarity(words[i], words[j]);
                         }
                     }
                 }
+                double[]r=WordnetUtils.calculateSimilarity(pairs.toArray(new String[0]));
+        		
+        		for(double d:r){
+        			sumSimilarity +=d;
+        		}
                 similarities[i] = sumSimilarity / (1 + interval.end - interval.begining);
             }
         }

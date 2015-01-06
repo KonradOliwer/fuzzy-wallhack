@@ -5,11 +5,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import pwr.pjn.wrongnessdetector.WordsUtils;
 import pwr.pjn.wrongnessdetector.WrongnessDetector;
+import pwr.pjn.wrongnessdetector.similar.WordnetUtils;
 import pwr.pjn.wrongnessdetector.topics.LDA.LDAWrapper;
 import pwr.pjn.wrongnessdetector.topics.LDA.Topic;
 import pwr.pjn.wrongnessdetector.topics.LDA.TopicsUtils;
@@ -69,7 +72,7 @@ public class TopicBasedWrongnessDetector implements WrongnessDetector {
 
         int[] temp1 = new int[numTopics];
         IndexedValue[] temp2 = new IndexedValue[lerningSetTopics.size()];
-        for (int i = 0; i < temp1.length; i++) {
+        for (int i = 0; i < temp2.length; i++) {
             temp2[i] = new IndexedValue(i);
         }
         for (Topic topic : topics) {
@@ -124,12 +127,23 @@ public class TopicBasedWrongnessDetector implements WrongnessDetector {
         for (int i : closest) {
             if (i != NO_INDEX) {
                 double best = Double.MIN_VALUE;
+                LinkedList<String> pairs= new LinkedList<String>();
                 for (int j = 0; j < lerningSetTopics.get(i).getWordsNumber(); j++) {
-                    double similarity = WordsUtils.calculateSimilarity(word, lerningSetTopics.get(i).getWord(j));
-                    if (similarity > best) {
-                        best = similarity;
-                    }
+                	pairs.add(word);
+                	pairs.add(lerningSetTopics.get(i).getWord(j));
+                	
+                	
+                    //double similarity = WordsUtils.calculateSimilarity(word, lerningSetTopics.get(i).getWord(j));
+                    
                 }
+
+                double[]r=WordnetUtils.calculateSimilarity(pairs.toArray(new String[0]));
+        		
+        		for(double d:r){
+        			if (d > best) {
+                        best = d;
+                    }
+        		}
                 sum += best;
                 number++;
             }
