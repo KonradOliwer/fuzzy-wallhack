@@ -1,6 +1,5 @@
 package pwr.pjn.wrongnessdetector.similar;
 
-import static java.awt.SystemColor.text;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,7 +21,7 @@ public class WordsAvgSimilarityWrongnessDetector implements WrongnessDetector {
     private final boolean countCommas;
     private String[] text;
 
-    WordsAvgSimilarityWrongnessDetector(String stoplistDir, int maxStops, boolean countCommas) {
+    public WordsAvgSimilarityWrongnessDetector(String stoplistDir, int maxStops, boolean countCommas) {
         this.stoplistDir = stoplistDir;
         this.maxStops = maxStops;
         this.countCommas = countCommas;

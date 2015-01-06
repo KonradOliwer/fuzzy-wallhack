@@ -23,7 +23,7 @@ public class Learning {
 
     public static void main(String[] args) throws Exception {
         String stoplistFilePath = "stoplists/pl.txt";
-        String processedFilePath = "learning_data/62956.1166476-1166576.txt";
+        String processedFilePath = "learning_data/62956.1111111-1999999.txt";
         String saveFileName = SAVE_FILE_BASEDIR + "/simple.wd";
         new File(SAVE_FILE_BASEDIR).mkdir();
         learnPerSentence(processedFilePath, stoplistFilePath, saveFileName);
@@ -43,7 +43,6 @@ public class Learning {
             TopicsUtils.topicsPruning(topics, 0, 4, 100000);
             oos = new ObjectOutputStream(new FileOutputStream(saveFileName));
             oos.writeObject(topics);
-            oos.close();
         } catch (IOException ex) {
             Logger.getLogger(Learning.class.getName()).log(Level.SEVERE, null, ex);
         } finally {

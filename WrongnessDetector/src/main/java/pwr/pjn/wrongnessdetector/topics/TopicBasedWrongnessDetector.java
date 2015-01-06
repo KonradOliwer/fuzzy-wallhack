@@ -22,17 +22,17 @@ public class TopicBasedWrongnessDetector implements WrongnessDetector {
 
     private static final int NO_INDEX = -1;
     private final int iterations;
-    private final int consideredTopicsNumber;
     private final double similarityThreshold;
     private final int sameWordsThreshold;
     private final String stoplistFilePath;
     private final String lerningSetTopicsPath;
     private String inputFilePath;
+    private final double topicsPerSentence;
 
-    TopicBasedWrongnessDetector(int iterations, int consideredTopicsNumber, double similarityThreshold, int sameWordsThreshold,
+    public TopicBasedWrongnessDetector(int iterations, double topicsPerSentence, double similarityThreshold, int sameWordsThreshold,
             String stoplistFilePath, String lerningSetTopicsPath) {
         this.iterations = iterations;
-        this.consideredTopicsNumber = consideredTopicsNumber;
+        this.topicsPerSentence = topicsPerSentence;
         this.similarityThreshold = similarityThreshold;
         this.sameWordsThreshold = sameWordsThreshold;
         this.stoplistFilePath = stoplistFilePath;
@@ -63,11 +63,11 @@ public class TopicBasedWrongnessDetector implements WrongnessDetector {
     public List<String> pickWords() throws IOException {
         List<String> result = new ArrayList();
         LDAWrapper lda = new LDAWrapper(stoplistFilePath);
-        int numTopics = TopicsUtils.getNumberOfSentyencesInDocument(inputFilePath);
+        int numTopics = (int) (TopicsUtils.getNumberOfSentyencesInDocument(inputFilePath) * topicsPerSentence);
         List<Topic> topics = lda.execute(stoplistFilePath, numTopics, iterations);
         List<Topic> lerningSetTopics = TopicsUtils.loadTopics(lerningSetTopicsPath);
 
-        int[] temp1 = new int[consideredTopicsNumber];
+        int[] temp1 = new int[numTopics];
         IndexedValue[] temp2 = new IndexedValue[lerningSetTopics.size()];
         for (int i = 0; i < temp1.length; i++) {
             temp2[i] = new IndexedValue(i);
@@ -109,7 +109,7 @@ public class TopicBasedWrongnessDetector implements WrongnessDetector {
             }
         }
         Arrays.sort(occurences);
-        for (int i = 0; i < consideredTopicsNumber; i++) {
+        for (int i = 0; i < closest.length; i++) {
             if (sameWordsThreshold >= occurences[occurences.length - i - 1].value) {
                 closest[i] = occurences[occurences.length - i - 1].id;
             } else {
