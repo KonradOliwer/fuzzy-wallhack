@@ -3,6 +3,7 @@ package pwr.pjn.wrongnessdetector.topics;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import pwr.pjn.wrongnessdetector.WordsUtils;
 import pwr.pjn.wrongnessdetector.topics.LDA.LDAWrapper;
 import pwr.pjn.wrongnessdetector.topics.LDA.Topic;
 import pwr.pjn.wrongnessdetector.topics.LDA.TopicsUtils;
@@ -91,7 +92,7 @@ public class TopicBasedWrongnessDetector {
             if (i != NO_INDEX) {
                 double best = Double.MIN_VALUE;
                 for (int j = 0; j < lerningSetTopics.get(i).getWordsNumber(); j++) {
-                    double similarity = calculateSimilarity(word, lerningSetTopics.get(i).getWord(j));
+                    double similarity = WordsUtils.calculateSimilarity(word, lerningSetTopics.get(i).getWord(j));
                     if (similarity > best) {
                         best = similarity;
                     }
@@ -101,9 +102,5 @@ public class TopicBasedWrongnessDetector {
             }
         }
         return number > 0 ? sum / closest.length : 1;
-    }
-
-    private double calculateSimilarity(String word1, String word2) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
