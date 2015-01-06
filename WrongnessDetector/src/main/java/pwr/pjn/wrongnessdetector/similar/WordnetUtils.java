@@ -1,14 +1,7 @@
 package pwr.pjn.wrongnessdetector.similar;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
-
-import org.python.core.PyException;
-import org.python.core.PyInteger;
-import org.python.core.PyObject;
-import org.python.util.PythonInterpreter;
 
 public class WordnetUtils {
 
