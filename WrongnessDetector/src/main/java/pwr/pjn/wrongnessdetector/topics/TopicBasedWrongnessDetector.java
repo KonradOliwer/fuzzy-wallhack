@@ -1,9 +1,15 @@
 package pwr.pjn.wrongnessdetector.topics;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pwr.pjn.wrongnessdetector.WordsUtils;
+import pwr.pjn.wrongnessdetector.WrongnessDetector;
 import pwr.pjn.wrongnessdetector.topics.LDA.LDAWrapper;
 import pwr.pjn.wrongnessdetector.topics.LDA.Topic;
 import pwr.pjn.wrongnessdetector.topics.LDA.TopicsUtils;
@@ -12,23 +18,50 @@ import pwr.pjn.wrongnessdetector.topics.LDA.TopicsUtils;
  *
  * @author KonradOliwer
  */
-public class TopicBasedWrongnessDetector {
+public class TopicBasedWrongnessDetector implements WrongnessDetector {
 
     private static final int NO_INDEX = -1;
     private final int iterations;
     private final int consideredTopicsNumber;
     private final double similarityThreshold;
     private final int sameWordsThreshold;
+    private final String stoplistFilePath;
+    private final String lerningSetTopicsPath;
+    private String inputFilePath;
 
-    TopicBasedWrongnessDetector(int iterations, int consideredTopicsNumber, double similarityThreshold, int sameWordsThreshold) {
+    TopicBasedWrongnessDetector(int iterations, int consideredTopicsNumber, double similarityThreshold, int sameWordsThreshold,
+            String stoplistFilePath, String lerningSetTopicsPath) {
         this.iterations = iterations;
         this.consideredTopicsNumber = consideredTopicsNumber;
         this.similarityThreshold = similarityThreshold;
         this.sameWordsThreshold = sameWordsThreshold;
+        this.stoplistFilePath = stoplistFilePath;
+        this.lerningSetTopicsPath = lerningSetTopicsPath;
     }
 
-    public String detect(String inputFilePath, String stoplistFilePath, String lerningSetTopicsPath) throws IOException {
-        StringBuilder sb = new StringBuilder();
+    public void setInputFile(String inputFilePath) {
+        this.inputFilePath = inputFilePath;
+    }
+
+    @Override
+    public double[] detect() {
+        double[] result = null;
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(inputFilePath)));
+            String[] words = content.split(" ");
+            result = new double[words.length];
+            List<String> wrongWords = pickWords();
+            for (int i = 0; i < words.length; i++) {
+                result[i] = wrongWords.contains(words[i]) ? 0 : 1;
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(TopicBasedWrongnessDetector.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result == null ? new double[0] : result;
+    }
+
+    public List<String> pickWords() throws IOException {
+        List<String> result = new ArrayList();
         LDAWrapper lda = new LDAWrapper(stoplistFilePath);
         int numTopics = TopicsUtils.getNumberOfSentyencesInDocument(inputFilePath);
         List<Topic> topics = lda.execute(stoplistFilePath, numTopics, iterations);
@@ -40,25 +73,25 @@ public class TopicBasedWrongnessDetector {
             temp2[i] = new IndexedValue(i);
         }
         for (Topic topic : topics) {
-            sb.append(findIncorectWords(topic, lerningSetTopics, temp1, temp2));
+            result.addAll(findIncorectWords(topic, lerningSetTopics, temp1, temp2));
         }
 
-        return sb.toString();
+        return result;
     }
 
-    private StringBuilder findIncorectWords(Topic topic, List<Topic> lerningSetTopics, int[] closest, IndexedValue[] occurences) {
+    private List<String> findIncorectWords(Topic topic, List<Topic> lerningSetTopics, int[] closest, IndexedValue[] occurences) {
         findStreightDistance(topic, lerningSetTopics, closest, occurences);
         double[] avgWordDistances = new double[topic.getWordsNumber()];
         for (int i = 0; i < avgWordDistances.length; i++) {
             avgWordDistances[i] = calculateAvgWordSimilarity(topic.getWord(i), lerningSetTopics, closest);
         }
-        StringBuilder sb = new StringBuilder();
+        List<String> result = new ArrayList();
         for (int i = 0; i < avgWordDistances.length; i++) {
-            if (avgWordDistances[i] < similarityThreshold){
-                sb.append(topic.getWord(i)).append(' ');
+            if (avgWordDistances[i] < similarityThreshold) {
+                result.add(topic.getWord(i));
             }
         }
-        return sb;
+        return result;
     }
 
     private void findStreightDistance(Topic topic, List<Topic> lerningSetTopics, int[] closest, IndexedValue[] occurences) {

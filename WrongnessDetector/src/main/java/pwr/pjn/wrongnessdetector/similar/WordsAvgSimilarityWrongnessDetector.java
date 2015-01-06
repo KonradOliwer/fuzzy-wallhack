@@ -1,5 +1,6 @@
 package pwr.pjn.wrongnessdetector.similar;
 
+import static java.awt.SystemColor.text;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -8,20 +9,40 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pwr.pjn.wrongnessdetector.WordsUtils;
+import pwr.pjn.wrongnessdetector.WrongnessDetector;
 
 /**
  *
  * @author KonradOliwer
  */
-public class WordsAvgSimilarityWrongnessDetector {
+public class WordsAvgSimilarityWrongnessDetector implements WrongnessDetector {
+
+    private final String stoplistDir;
+    private final int maxStops;
+    private final boolean countCommas;
+    private String[] text;
+
+    WordsAvgSimilarityWrongnessDetector(String stoplistDir, int maxStops, boolean countCommas) {
+        this.stoplistDir = stoplistDir;
+        this.maxStops = maxStops;
+        this.countCommas = countCommas;
+    }
     
-    public double[] getAvgSimilarity(String input, String stoplistDir, int maxStops, boolean countCommas) {
+    public void setInputText(String text){
+        this.text = text.split(" ");
+    }
+    
+    @Override
+    public double[] detect() {
+        return getAvgSimilarity(text);
+    }
+
+    public double[] getAvgSimilarity(String[] words) {
         List<String> stoplist = loadStoplis(stoplistDir);
-        String[] words = input.split(" ");
         double[] similarities = new double[words.length];
         Interval interval = new Interval();
         for (int i = 0; i < words.length; i++) {
-            calculateInterval(interval, words, i, maxStops, countCommas);
+            calculateInterval(interval, words, i);
             for (i = interval.begining; i < interval.end; i++) {
                 double sumSimilarity = 1; //if there is one word it will pass every threshold
                 if (!skipWord(words[i], stoplist)) {
@@ -41,7 +62,7 @@ public class WordsAvgSimilarityWrongnessDetector {
         return word.equals(".") || word.equals(",") || word.contains(" ") || !stoplist.contains(word);
     }
 
-    private void calculateInterval(Interval interval, String[] words, int i, int maxStops, boolean countCommas) {
+    private void calculateInterval(Interval interval, String[] words, int i) {
         interval.begining = i;
         int stopChars = 0;
         while (i < words.length) {
