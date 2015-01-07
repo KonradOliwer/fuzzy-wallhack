@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 
 public class WordnetUtils {
 
-	private static final String FPATH = "similarity.py";
+	private static final String FPATH = "C:\\Users\\kcomr_000\\Documents\\NetBeansProjects\\fuzzy-wallhack\\WrongnessDetector\\similarity.py";
 
 	public static double[] calculateSimilarity(String[] pairs) {
 		double[] result= new double[pairs.length / 2];;

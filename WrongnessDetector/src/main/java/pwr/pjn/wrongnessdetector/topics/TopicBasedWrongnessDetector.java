@@ -67,6 +67,7 @@ public class TopicBasedWrongnessDetector implements WrongnessDetector {
         List<String> result = new ArrayList();
         LDAWrapper lda = new LDAWrapper(stoplistFilePath);
         int numTopics = (int) (TopicsUtils.getNumberOfSentyencesInDocument(inputFilePath) * topicsPerSentence);
+        numTopics = numTopics < 1 ? 1 : numTopics;
         List<Topic> topics = lda.execute(stoplistFilePath, numTopics, iterations);
         List<Topic> lerningSetTopics = TopicsUtils.loadTopics(lerningSetTopicsPath);
 

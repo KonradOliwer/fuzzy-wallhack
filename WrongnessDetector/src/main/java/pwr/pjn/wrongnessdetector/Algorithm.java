@@ -1,6 +1,7 @@
 package pwr.pjn.wrongnessdetector;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -13,12 +14,12 @@ import pwr.pjn.wrongnessdetector.similar.WordsAvgSimilarityWrongnessDetector;
  */
 public class Algorithm {
     
-    static String inputFile = "";
-    static double TOPIC_BASED_WEIDTH = 0.5;
+    static String inputFile = "C:\\Users\\kcomr_000\\Documents\\NetBeansProjects\\fuzzy-wallhack\\WrongnessDetector\\test_data\\ap.2.txt";
+    static double TOPIC_BASED_WEIDTH = 0;
     static double SIMILARITY_BASED_WEIDTH = 1;
 ///TopicBasedWrongnessDetector
-    static int iterations = 1000;
-    static double topicsPerSentence = 0.7;
+    static int iterations = 1;
+    static double topicsPerSentence = 0.04;
     static double similarityThreshold = 0.1;
     static int sameWordsThreshold = 3;
     static String stoplistFilePath = "stoplists/pl.txt";
@@ -33,7 +34,8 @@ public class Algorithm {
         topicDetector.setInputFile(inputFile);
         WordsAvgSimilarityWrongnessDetector similarityDetector = new WordsAvgSimilarityWrongnessDetector(stoplistFilePath, maxStops,
                 countCommas);
-        similarityDetector.setInputText(new String(Files.readAllBytes(Paths.get(inputFile))));
+//        similarityDetector.setInputText(String.join(" ", (Files.readAllLines(Paths.get(inputFile), Charset.forName("UTF-8")))));
+        similarityDetector.setInputText(WordsUtils.loadFile(inputFile));
         
         double[] resultTB = topicDetector.detect();
         double[] resultS = similarityDetector.detect();
