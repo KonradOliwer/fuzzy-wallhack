@@ -28,6 +28,7 @@ public class WordsAvgSimilarityWrongnessDetector implements WrongnessDetector {
     }
 
     public void setInputText(String text) {
+    	text=WordsUtils.extractRelevant(text);
         this.text = text.split(" ");
     }
 

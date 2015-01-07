@@ -63,8 +63,8 @@ public class ParseHTML {
             }
         }
         
-        return String.format("%s", sb);
-        //return String.format("%s \t_\t%s", name, sb);
+       // return String.format("%s", sb);
+        return String.format("%s \t_\t%s", name, sb);
     }
     
     public static void main(String args[]) throws IOException {
