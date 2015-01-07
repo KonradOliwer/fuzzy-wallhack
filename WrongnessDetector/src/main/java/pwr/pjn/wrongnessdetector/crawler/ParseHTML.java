@@ -7,8 +7,10 @@ import java.io.IOException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
 import pl.sgjp.morfeusz.Morfeusz;
 import pl.sgjp.morfeusz.MorfeuszUsage;
+import pwr.pjn.wrongnessdetector.WordsUtils;
 
 public class ParseHTML {
     
@@ -28,10 +30,11 @@ public class ParseHTML {
             out = new BufferedWriter(new FileWriter(f));
             for (int i = from; i <= to; i++) {
                 doc = Jsoup.connect("http://www.rp.pl/artykul/" + topic + "," + i + ".html").get();
-                text = doc.body().select(".storyContent > p").text();
+                text = doc.body().select(".storyContent > .articleLeftBox ~ p").text();
                 
                 if (!text.isEmpty()) {
                     text = processInput(text, topic + "-" + i);
+                    text=WordsUtils.extractRelevant(text);
                     out.write(text);
                     out.newLine();
                 }
@@ -59,10 +62,12 @@ public class ParseHTML {
                 sb.append(" ");
             }
         }
-        return String.format("%s \t_\t%s", name, sb);
+        
+        return String.format("%s", sb);
+        //return String.format("%s \t_\t%s", name, sb);
     }
     
     public static void main(String args[]) throws IOException {
-        getArticles(1111111, 1999999);
+        getArticles(1166476,1166576);
     }
 }
